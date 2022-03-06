@@ -1,6 +1,6 @@
 import {
   WEATHER_UI
-} from "/view.js";
+} from "./view.js";
 
 WEATHER_UI.TAB_BTNS.forEach(tabBtn => {
   tabBtn.addEventListener('click', function (e) {
