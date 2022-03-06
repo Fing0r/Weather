@@ -142,7 +142,7 @@ button {
   transition: background-color 0.3s, color 0.3s;
 }
 
-.info__btn--active {
+.info__btn.active {
   background-color: #000;
   color: #fff;
 }
@@ -166,7 +166,7 @@ button {
   overflow: auto;
 }
 
-.info__box--active {
+.info__box.active {
   display: flex;
   flex-direction: column;
 }
