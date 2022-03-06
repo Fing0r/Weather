@@ -1,15 +1,24 @@
-const tabBtns = document.querySelectorAll('[data-btn]');
-const tabInfo = document.querySelectorAll('[data-item]');
+import {
+  WEATHER_UI
+} from "/view.js";
 
-tabBtns.forEach(tabBtn => {
+WEATHER_UI.TAB_BTNS.forEach(tabBtn => {
   tabBtn.addEventListener('click', function (e) {
-    const tabBtnDataAttr = e.currentTarget.dataset.btn
-    const tabInfoTarget = document.querySelector(`[data-item='${tabBtnDataAttr}']`)
-
-    tabBtns.forEach(tabBtn => tabBtn.classList.remove('info__btn--active'));
-    tabInfo.forEach(tabInfo => tabInfo.classList.remove('info__box--active'));
-
-    e.currentTarget.classList.add('info__btn--active')
-    tabInfoTarget.classList.add('info__box--active')
+    removeActiveClass(WEATHER_UI.TAB_BTNS, WEATHER_UI.ACTIVE_CLASS)
+    removeActiveClass(WEATHER_UI.TAB_INFO, WEATHER_UI.ACTIVE_CLASS)
+    changeTab(e, WEATHER_UI.ACTIVE_CLASS)
   })
 });
+
+
+function removeActiveClass(elems, activeClass) {
+  elems.forEach(elem => elem.classList.remove(activeClass));
+}
+
+function changeTab(e, activeClass) {
+  const isDataAttrCurrentTargetBtn = e.currentTarget.dataset.btn
+  const isInfoTargetTab = document.querySelector(`[data-item='${isDataAttrCurrentTargetBtn}']`)
+
+  e.currentTarget.classList.add(activeClass)
+  isInfoTargetTab.classList.add(activeClass)
+}

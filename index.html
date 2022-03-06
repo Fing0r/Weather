@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="style.css" rel="stylesheet">
-  <script defer src="main.js"></script>
+  <script defer src="main.js" type="module"></script>
   <title>Weather</title>
   <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
 </head>
@@ -29,7 +29,7 @@
       </li>
       <li class="weather__item weather__item--info">
         <div class="info">
-          <div class="info__box info__box--active now" data-item="1">
+          <div class="info__box active now" data-item="1">
             <span class="now__temp">14°</span>
             <img class="now__img" src="./img/cloud.png" alt="" width="78" height="59">
             <div class="now__bottom">
@@ -107,7 +107,7 @@
             </ul>
           </div>
           <div class="info__btns">
-            <button class="info__btn info__btn--active" data-btn="1">Now</button>
+            <button class="info__btn active" data-btn="1">Now</button>
             <button class="info__btn" data-btn="2">Details</button>
             <button class="info__btn" data-btn="3">Forecast</button>
           </div>
