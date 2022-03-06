@@ -195,21 +195,24 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background-color 0.3s, color 0.3s;
+  transition: background-color 0.3s, color 0.3s, opacity 3.3s;
 }
-
 
 .search__btn:hover {
   background-color: #000;
   color: #fff;
 }
 
-.search__btn:active {
-  background-color: #8b8484;
+.search__btn path {
+  transition: opacity 0.3s;
 }
 
-.search__btn svg {
-  color: inherit;
+.search__btn:hover path {
+  opacity: 1;
+}
+
+.search__btn:active {
+  background-color: #8b8484;
 }
 
 .cities {
