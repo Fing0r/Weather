@@ -20,7 +20,7 @@ WEATHER_UI.SEARCH_INPUT.addEventListener('submit', function (e) {
       document.querySelector('.now__temp').textContent = `${Math.round(json.main.temp - 273.15)}°`
       document.querySelector('.now__city').textContent = json.name
       document.querySelector('.now__img').src = `http://openweathermap.org/img/wn/${json.weather[0].icon}.png`
-    })
+    }) 
 })
 
 function getUrl(city) {
