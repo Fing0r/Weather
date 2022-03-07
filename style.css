@@ -273,6 +273,7 @@ button {
   align-self: center;
   display: block;
   margin-bottom: auto;
+  object-fit: cover;
 }
 
 .now__bottom {
@@ -357,4 +358,8 @@ button {
 .forecast__weather span {
   display: block;
   margin: 0 auto;
+}
+
+.forecast__weather img {
+   object-fit: cover;
 }
