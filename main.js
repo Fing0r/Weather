@@ -15,8 +15,17 @@ WEATHER_UI.SEARCH_FORM.addEventListener('submit', function (e) {
   const cityName = WEATHER_UI.SEARCH_INPUT.value;
 
   loadJson(getUrl(cityName))
-    .then(json => showNowTabInfo(json))
+    .then(json => showNowTabInfo(json));
 })
+
+WEATHER_UI.CITIES.forEach(city => {
+  city.addEventListener('click', function () {
+    const cityName = city.textContent;
+
+    loadJson(getUrl(cityName))
+      .then(json => showNowTabInfo(json));
+  })
+});
 
 function showNowTabInfo(params) {
   const getUrlImg = (img) => `https://openweathermap.org/img/wn/${img}.png`
