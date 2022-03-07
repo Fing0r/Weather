@@ -4,39 +4,49 @@ import {
 
 WEATHER_UI.TAB_BTNS.forEach(tabBtn => {
   tabBtn.addEventListener('click', function (e) {
-    removeActiveClass(WEATHER_UI.TAB_BTNS, WEATHER_UI.ACTIVE_CLASS)
-    removeActiveClass(WEATHER_UI.TAB_INFO, WEATHER_UI.ACTIVE_CLASS)
-    changeTab(e, WEATHER_UI.ACTIVE_CLASS)
+    removeActiveClass(WEATHER_UI.TAB_BTNS)
+    removeActiveClass(WEATHER_UI.TAB_INFO)
+    changeTab(e)
   })
 });
 
-WEATHER_UI.SEARCH_INPUT.addEventListener('submit', function (e) {
+WEATHER_UI.SEARCH_FORM.addEventListener('submit', function (e) {
   e.preventDefault();
-  const cityName = document.querySelector('.search__input').value;
+  const cityName = WEATHER_UI.SEARCH_INPUT.value;
 
-  fetch(getUrl(cityName))
-    .then(response => response.json())
-    .then(json => {
-      document.querySelector('.now__temp').textContent = `${Math.round(json.main.temp - 273.15)}°`
-      document.querySelector('.now__city').textContent = json.name
-      document.querySelector('.now__img').src = `http://openweathermap.org/img/wn/${json.weather[0].icon}.png`
-    }) 
+  loadJson(getUrl(cityName))
+    .then(json => showNowTabInfo(json))
 })
 
+function showNowTabInfo(params) {
+  const getUrlImg = (img) => `http://openweathermap.org/img/wn/${img}.png`
+
+  WEATHER_UI.NOW_TEMP.textContent = conversKelinsToCelsius(params.main.temp)
+  WEATHER_UI.NOW_CITY.textContent = params.name
+  WEATHER_UI.NOW_IMG.src = getUrlImg(params.weather[0].icon)
+}
+
+function conversKelinsToCelsius(temp) {
+  return `${Math.round(temp - 273.15)}°`
+}
+
+function loadJson(url) {
+  return fetch(url)
+    .then(response => response.json());
+}
+
 function getUrl(city) {
-  const serverUrl = 'http://api.openweathermap.org/data/2.5/weather';
-  const apiKey = 'f660a2fb1e4bad108d6160b7f58c555f';
-  return `${serverUrl}?q=${city}&appid=${apiKey}`;
+  return `${WEATHER_UI.API_URL}?q=${city}&appid=${WEATHER_UI.API_KEY}`;
 }
 
-function removeActiveClass(elems, activeClass) {
-  elems.forEach(elem => elem.classList.remove(activeClass));
+function removeActiveClass(elems) {
+  elems.forEach(elem => elem.classList.remove(WEATHER_UI.ACTIVE_CLASS));
 }
 
-function changeTab(e, activeClass) {
+function changeTab(e) {
   const isDataAttrCurrentTargetBtn = e.currentTarget.dataset.btn
   const isInfoTargetTab = document.querySelector(`[data-item='${isDataAttrCurrentTargetBtn}']`)
 
-  e.currentTarget.classList.add(activeClass)
-  isInfoTargetTab.classList.add(activeClass)
+  e.currentTarget.classList.add(WEATHER_UI.ACTIVE_CLASS)
+  isInfoTargetTab.classList.add(WEATHER_UI.ACTIVE_CLASS)
 }
