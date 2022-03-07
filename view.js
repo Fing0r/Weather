@@ -8,5 +8,5 @@ export const WEATHER_UI = {
   NOW_IMG: document.querySelector('.now__img'),
   ACTIVE_CLASS: 'active',
   API_KEY: 'f660a2fb1e4bad108d6160b7f58c555f',
-  API_URL: 'http://api.openweathermap.org/data/2.5/weather',
+  API_URL: 'http://api.openweathermap.org/data/2.5/weather', 
 }
