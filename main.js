@@ -19,7 +19,7 @@ WEATHER_UI.SEARCH_FORM.addEventListener('submit', function (e) {
 })
 
 function showNowTabInfo(params) {
-  const getUrlImg = (img) => `http://openweathermap.org/img/wn/${img}.png`
+  const getUrlImg = (img) => `https://openweathermap.org/img/wn/${img}.png`
 
   WEATHER_UI.NOW_TEMP.textContent = conversKelinsToCelsius(params.main.temp)
   WEATHER_UI.NOW_CITY.textContent = params.name
