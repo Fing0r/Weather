@@ -15,7 +15,8 @@ WEATHER_UI.SEARCH_FORM.addEventListener('submit', function (e) {
   const cityName = WEATHER_UI.SEARCH_INPUT.value;
 
   loadJson(getUrl(cityName))
-    .then(json => showNowTabInfo(json));
+    .then(json => showNowTabInfo(json))
+    .catch(err => console.log(err.message))
 })
 
 WEATHER_UI.CITIES.forEach(city => {
@@ -23,7 +24,7 @@ WEATHER_UI.CITIES.forEach(city => {
     const cityName = city.textContent;
 
     loadJson(getUrl(cityName))
-      .then(json => showNowTabInfo(json));
+      .then(json => showNowTabInfo(json))
   })
 });
 
@@ -40,8 +41,12 @@ function conversKelinsToCelsius(temp) {
 }
 
 function loadJson(url) {
-  return fetch(url)
-    .then(response => response.json());
+  return fetch(url).then(response => {
+    if (response.ok) {
+      return response.json()
+    }
+    throw Error('Неверное название города')
+  })
 }
 
 function getUrl(city) {
