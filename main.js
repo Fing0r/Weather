@@ -50,7 +50,7 @@ function checkFavoriteCity(cityName) {
 }
 
 function showNowTabInfo(params) {
-  const getUrlImg = (img) => `http://openweathermap.org/img/wn/${img}.png`
+  const getUrlImg = (img) => `https://openweathermap.org/img/wn/${img}.png`
 
   checkFavoriteCity(params.name);
   UI_ELEMENTS.NOW_TEMP.textContent = Math.round(params.main.temp);
@@ -136,6 +136,6 @@ function changeTab(e) {
   const isDataAttrCurrentTargetBtn = e.currentTarget.dataset.btn
   const isInfoTargetTab = document.querySelector(`[data-item='${isDataAttrCurrentTargetBtn}']`)
 
-  e.currentTarget.classList.add(UI_ELEMENTS.ACTIVE_CLASS)
-  isInfoTargetTab.classList.add(UI_ELEMENTS.ACTIVE_CLASS)
+  e.currentTarget.classList.add(WEATHER_UI.ACTIVE_CLASS)
+  isInfoTargetTab.classList.add(WEATHER_UI.ACTIVE_CLASS)
 }

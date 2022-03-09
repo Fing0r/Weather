@@ -15,3 +15,4 @@ export const UI_ELEMENTS = {
   FAVORITE_LIST: document.querySelector('.cities__list'),
   FAVORITE_CITIES: [],
 }
+
