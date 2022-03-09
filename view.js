@@ -10,7 +10,7 @@ export const UI_ELEMENTS = {
   CITIES_DEL: document.querySelectorAll('.cities__close'),
   ACTIVE_CLASS: 'active',
   API_KEY: 'f660a2fb1e4bad108d6160b7f58c555f',
-  API_URL: 'http://api.openweathermap.org/data/2.5/weather',
+  API_URL: 'https://api.openweathermap.org/data/2.5/weather',
   FAVORITE_BTN: document.querySelector('.now__heart'),
   FAVORITE_LIST: document.querySelector('.cities__list'),
   FAVORITE_CITIES: [],
