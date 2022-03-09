@@ -1,66 +1,141 @@
 import {
-  WEATHER_UI
+  UI_ELEMENTS
 } from "./view.js";
 
-WEATHER_UI.TAB_BTNS.forEach(tabBtn => {
+UI_ELEMENTS.TAB_BTNS.forEach(tabBtn => {
   tabBtn.addEventListener('click', function (e) {
-    removeActiveClass(WEATHER_UI.TAB_BTNS)
-    removeActiveClass(WEATHER_UI.TAB_INFO)
+    removeActiveClass(UI_ELEMENTS.TAB_BTNS)
+    removeActiveClass(UI_ELEMENTS.TAB_INFO)
     changeTab(e)
   })
 });
 
-WEATHER_UI.SEARCH_FORM.addEventListener('submit', function (e) {
+UI_ELEMENTS.SEARCH_FORM.addEventListener('submit', function (e) {
   e.preventDefault();
-  const cityName = WEATHER_UI.SEARCH_INPUT.value;
+  const cityName = UI_ELEMENTS.SEARCH_INPUT.value.trim();
 
   loadJson(getUrl(cityName))
-    .then(json => showNowTabInfo(json))
-    .catch(err => console.log(err.message))
+    .then(showNowTabInfo)
+    .catch(console.log)
+  UI_ELEMENTS.SEARCH_INPUT.value = ''
 })
 
-WEATHER_UI.CITIES.forEach(city => {
+UI_ELEMENTS.CITIES.forEach(city => {
   city.addEventListener('click', function () {
-    const cityName = city.textContent;
-
-    loadJson(getUrl(cityName))
-      .then(json => showNowTabInfo(json))
+    createEventCityWeather(city)
   })
 });
+
+function createEventCityWeather(city) {
+  const cityName = city.textContent;
+
+  loadJson(getUrl(cityName))
+    .then(showNowTabInfo)
+}
+
+// UI_ELEMENTS.FAVORITE_BTN.addEventListener('click', addFavoriteCity);
+
+function checkFavoriteCity(cityName) {
+  const isCityInList = UI_ELEMENTS.FAVORITE_CITIES.some(item => item === cityName);
+
+  if (isCityInList) {
+    UI_ELEMENTS.FAVORITE_BTN.classList.add(UI_ELEMENTS.ACTIVE_CLASS);
+    UI_ELEMENTS.FAVORITE_BTN.addEventListener('click', removeFavoriteCity);
+    UI_ELEMENTS.FAVORITE_BTN.removeEventListener('click', addFavoriteCity);
+  } else {
+    UI_ELEMENTS.FAVORITE_BTN.classList.remove(UI_ELEMENTS.ACTIVE_CLASS);
+    UI_ELEMENTS.FAVORITE_BTN.removeEventListener('click', removeFavoriteCity);
+    UI_ELEMENTS.FAVORITE_BTN.addEventListener('click', addFavoriteCity);
+  }
+}
 
 function showNowTabInfo(params) {
   const getUrlImg = (img) => `http://openweathermap.org/img/wn/${img}.png`
 
-  WEATHER_UI.NOW_TEMP.textContent = conversKelinsToCelsius(params.main.temp)
-  WEATHER_UI.NOW_CITY.textContent = params.name
-  WEATHER_UI.NOW_IMG.src = getUrlImg(params.weather[0].icon)
+  checkFavoriteCity(params.name);
+  UI_ELEMENTS.NOW_TEMP.textContent = Math.round(params.main.temp);
+  UI_ELEMENTS.NOW_CITY.textContent = params.name;
+  UI_ELEMENTS.NOW_IMG.src = getUrlImg(params.weather[0].icon);
 }
 
-function conversKelinsToCelsius(temp) {
-  return `${Math.round(temp - 273.15)}°`
+function addFavoriteCity() {
+  UI_ELEMENTS.FAVORITE_LIST.append(createCityItemElement());
+  UI_ELEMENTS.FAVORITE_BTN.classList.add(UI_ELEMENTS.ACTIVE_CLASS);
+  UI_ELEMENTS.FAVORITE_BTN.removeEventListener('click', addFavoriteCity);
+  UI_ELEMENTS.FAVORITE_BTN.addEventListener('click', removeFavoriteCity);
+  UI_ELEMENTS.FAVORITE_CITIES.push(UI_ELEMENTS.NOW_CITY.textContent);
 }
 
-function loadJson(url) {
-  return fetch(url).then(response => {
-    if (response.ok) {
-      return response.json()
+function removeFavoriteCity() {
+  UI_ELEMENTS.FAVORITE_BTN.classList.remove(UI_ELEMENTS.ACTIVE_CLASS);
+  UI_ELEMENTS.FAVORITE_BTN.addEventListener('click', addFavoriteCity);
+
+  for (const iterator of UI_ELEMENTS.FAVORITE_LIST.children) {
+    const name = iterator.querySelector('.cities__name');
+    const isValis = UI_ELEMENTS.NOW_CITY.textContent.includes(name.textContent);
+    const indexItem = UI_ELEMENTS.FAVORITE_CITIES.findIndex(item => item === name.textContent)
+
+    if (isValis) {
+      iterator.remove();
+      UI_ELEMENTS.FAVORITE_CITIES.splice(indexItem, 1)
     }
-    throw Error('Неверное название города')
+  }
+}
+
+function createCityItemElement() {
+  const cityItemElement = document.createElement('li');
+  cityItemElement.classList = 'cities__item';
+
+  const cityItemName = document.createElement('button')
+  cityItemName.classList = 'cities__name';
+  cityItemName.textContent = UI_ELEMENTS.NOW_CITY.textContent;
+  cityItemName.type = 'button';
+
+  const cityItemClose = document.createElement('button')
+  cityItemClose.classList = 'cities__close';
+  cityItemClose.textContent = 'X';
+  cityItemClose.type = 'button';
+
+  cityItemElement.append(cityItemName);
+  cityItemElement.append(cityItemClose);
+
+  addEvent(cityItemName, createEventCityWeather)
+  addEvent(cityItemClose, createEventDeletFavoriteCity)
+
+  return cityItemElement;
+}
+
+function addEvent(button, createFunction) {
+  button.addEventListener('click', function () {
+    createFunction(button)
   })
 }
 
+function createEventDeletFavoriteCity(cityClose) {
+  cityClose.closest('.cities__item').remove()
+  UI_ELEMENTS.FAVORITE_BTN.classList.remove(UI_ELEMENTS.ACTIVE_CLASS)
+  UI_ELEMENTS.FAVORITE_BTN.addEventListener('click', addFavoriteCity)
+
+  const indexItem = UI_ELEMENTS.FAVORITE_CITIES.findIndex(item => item === cityClose.closest('.cities__item').querySelector('.cities__name').textContent)
+  UI_ELEMENTS.FAVORITE_CITIES.splice(indexItem, 1)
+}
+
+function loadJson(url) {
+  return fetch(url).then(response => response.json())
+}
+
 function getUrl(city) {
-  return `${WEATHER_UI.API_URL}?q=${city}&appid=${WEATHER_UI.API_KEY}`;
+  return `${UI_ELEMENTS.API_URL}?q=${city}&appid=${UI_ELEMENTS.API_KEY}&units=metric`;
 }
 
 function removeActiveClass(elems) {
-  elems.forEach(elem => elem.classList.remove(WEATHER_UI.ACTIVE_CLASS));
+  elems.forEach(elem => elem.classList.remove(UI_ELEMENTS.ACTIVE_CLASS));
 }
 
 function changeTab(e) {
   const isDataAttrCurrentTargetBtn = e.currentTarget.dataset.btn
   const isInfoTargetTab = document.querySelector(`[data-item='${isDataAttrCurrentTargetBtn}']`)
 
-  e.currentTarget.classList.add(WEATHER_UI.ACTIVE_CLASS)
-  isInfoTargetTab.classList.add(WEATHER_UI.ACTIVE_CLASS)
+  e.currentTarget.classList.add(UI_ELEMENTS.ACTIVE_CLASS)
+  isInfoTargetTab.classList.add(UI_ELEMENTS.ACTIVE_CLASS)
 }

@@ -242,20 +242,44 @@ button {
   width: 0;
 }
 
-.cities__item button {
+.cities__item {
   width: 100%;
-  padding: 9px 9px;
   text-align: start;
+  transition: background-color 0.3s, color 0.3s;
+  display: flex;
+}
+
+.cities__item:hover {
+  background-color: #8b8484
+}
+
+
+.cities__name {
+  padding: 9px 0;
+  padding-left: 9px;
+  text-align: left;
+  height: 100%;
+  color: inherit;
+  flex: 1 1 100%;
   transition: background-color 0.3s, color 0.3s;
 }
 
-.cities__item button:hover {
+.cities__close:hover,
+.cities__name:hover {
   background-color: #000;
   color: #fff;
 }
 
-.cities__item button:active {
+.cities__close:active,
+.cities__name:active {
   background-color: #8b8484;
+}
+
+.cities__close {
+  padding: 9px 0;
+  flex: 0 0 50px;
+  color: inherit;
+  transition: background-color 0.3s, color 0.3s;
 }
 
 .now {
@@ -273,6 +297,7 @@ button {
   align-self: center;
   display: block;
   margin-bottom: auto;
+  object-fit: cover;
 }
 
 .now__bottom {
@@ -288,7 +313,11 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: color 0.3s;
+  transition: color 0.3s, fill 0.3s;
+}
+
+.now__img[src=""] {
+  display: none;
 }
 
 .now__heart:hover {
@@ -297,6 +326,15 @@ button {
 
 .now__heart:active {
   color: inherit;
+}
+
+.now__heart svg {
+  transition: color 0.3s, fill 0.3s;
+}
+
+.now__heart.active svg {
+  color: red;
+  fill: currentColor;
 }
 
 .forecast__city,
@@ -357,4 +395,8 @@ button {
 .forecast__weather span {
   display: block;
   margin: 0 auto;
+}
+
+.forecast__weather img {
+  object-fit: cover;
 }

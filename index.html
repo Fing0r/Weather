@@ -16,8 +16,8 @@
   <div class="weather">
     <ul class="weather__list">
       <li class="weather__item weather__item--search">
-        <form class="search">
-          <input class="search__input"  type="search" name="" id="" placeholder="Enter the name of the city" required>
+        <form class="search" action="">
+          <input class="search__input" type="search" name="" id="" placeholder="Enter the name of the city" required>
           <button class="search__btn">
             <svg width="30" height="30" fill="none">
               <path opacity="0.54" fill-rule="evenodd" clip-rule="evenodd"
@@ -30,10 +30,10 @@
       <li class="weather__item weather__item--info">
         <div class="info">
           <div class="info__box active now" data-item="1">
-            <span class="now__temp">14°</span>
-            <img class="now__img" src="./img/cloud.png" alt="" width="78" height="59">
+            <span class="now__temp"></span>
+            <img class="now__img" src="" alt="" width="78" height="59">
             <div class="now__bottom">
-              <h3 class="now__city">Aktobe</h3>
+              <h3 class="now__city"></h3>
               <button class="now__heart">
                 <svg width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path opacity="0.54" fill-rule="evenodd" clip-rule="evenodd"
@@ -117,12 +117,10 @@
         <div class="cities">
           <h2 class="cities__title">Added Locations:</h2>
           <ul class="cities__list">
-            <li class="cities__item"><button type="button">Amur</button></li>
-            <li class="cities__item"><button type="button">Samara</button></li>
-            <li class="cities__item"><button type="button">Bali</button></li>
-            <li class="cities__item"><button type="button">Dane</button></li>
-            <li class="cities__item"><button type="button">Kilo</button></li>
-            <li class="cities__item"><button type="button">Nur-Sultan</button></li>
+            <!-- <li class="cities__item">
+              <button class="cities__name" type="button">Amur</button>
+              <button class="cities__close" type="button">X</button>
+            </li> -->
           </ul>
         </div>
       </li>
