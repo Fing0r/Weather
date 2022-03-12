@@ -270,6 +270,36 @@ button {
   color: #fff;
 }
 
+.cities__close {
+  position: relative;
+}
+
+.cities__close::before,
+.cities__close::after {
+  position: absolute;
+  content: '';
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(45deg);
+  background-color: #000000;
+  transition: background-color 0.3s;
+}
+
+.cities__close:hover::before,
+.cities__close:hover::after {
+  background-color: #fff;
+}
+
+.cities__close::after {
+  width: 2px;
+  height: 25px;
+}
+
+.cities__close::before {
+  width: 25px;
+  height: 2px;
+}
+
 .cities__close:active,
 .cities__name:active {
   background-color: #8b8484;

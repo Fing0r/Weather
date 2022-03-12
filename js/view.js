@@ -16,9 +16,9 @@ export function showWeather(e) {
 export function showCurrentWeather(cityName) {
   loadJson(getUrl(cityName, CONFIG.WEATHER))
     .then(city => {
-      stateFavoriteButton(city.name);
       showNowTab(city);
       showDetailsTab(city);
+      stateFavoriteButton();
     })
     .catch(console.log)
 }
@@ -49,17 +49,17 @@ export function showNowTab(city) {
   NOW.IMG.src = `${CONFIG.IMG}${city.weather[0].icon}@4x.png`
 }
 
-export const isCityInList = (cityName) => FAVORITES.CITIES.some(item => item === cityName);
+export const isCityInList = () => FAVORITES.CITIES.some(item => item === NOW.CITY.textContent);
 
-export function stateFavoriteButton(cityName) {
-  if (isCityInList(cityName)) {
+export function stateFavoriteButton() {
+  if (isCityInList()) {
     FAVORITES.ADD.classList.add(UI_ELEMENTS.ACTIVE_CLASS);
-    addEvent(FAVORITES.ADD, removeFavoriteCity)
-    removeEvent(FAVORITES.ADD, addFavoriteCity)
+    addEvent(FAVORITES.ADD, removeFavoriteCity);
+    removeEvent(FAVORITES.ADD, addFavoriteCity);
   } else {
     FAVORITES.ADD.classList.remove(UI_ELEMENTS.ACTIVE_CLASS);
-    addEvent(FAVORITES.ADD, addFavoriteCity)
-    removeEvent(FAVORITES.ADD, removeFavoriteCity)
+    addEvent(FAVORITES.ADD, addFavoriteCity);
+    removeEvent(FAVORITES.ADD, removeFavoriteCity);
   }
 }
 
@@ -74,33 +74,30 @@ export function addFavoriteCity() {
 
 export function removeFavoriteCity() {
   FAVORITES.ADD.classList.remove(UI_ELEMENTS.ACTIVE_CLASS);
-  addEvent(FAVORITES.ADD, addFavoriteCity)
+  addEvent(FAVORITES.ADD, addFavoriteCity);
 
-  for (const city of FAVORITES.LIST.children) {
-    const name = city.querySelector('.cities__name');
-    const isValid = NOW.CITY.textContent.includes(name.textContent);
-
-    if (isValid) {
-      city.remove();
-      const indexItem = FAVORITES.CITIES.findIndex(item => item === name.textContent)
-      FAVORITES.CITIES.splice(indexItem, 1);
-      return
+  [...FAVORITES.LIST.children].forEach(cityItem => {
+    const isTragetInNowTab = cityItem.textContent.trim() === NOW.CITY.textContent;
+    if (isTragetInNowTab) {
+      cityItem.remove();
+      FAVORITES.CITIES = FAVORITES.CITIES.filter(item => !(item === NOW.CITY.textContent))
+      return;
     }
-  }
+  })
 }
 
-export function deleteFavoriteCity(e) {
+export function removeCityFromList(e) {
   e.currentTarget.closest('.cities__item').remove()
   const cityNameTarget = e.currentTarget.closest('.cities__item').querySelector('.cities__name')
 
-  if (cityNameTarget.textContent === NOW.CITY.textContent) {
+  const isTragetInNowTab = cityNameTarget.textContent === NOW.CITY.textContent;
+  if (isTragetInNowTab) {
     FAVORITES.ADD.classList.remove(UI_ELEMENTS.ACTIVE_CLASS)
     addEvent(FAVORITES.ADD, addFavoriteCity)
   }
 
   const cityName = e.currentTarget.closest('.cities__item').querySelector('.cities__name')
-  const indexItem = FAVORITES.CITIES.findIndex(item => item === cityName.textContent)
-  FAVORITES.CITIES.splice(indexItem, 1)
+  FAVORITES.CITIES = FAVORITES.CITIES.filter(item => !(item === cityName.textContent))
 }
 
 export function createCitiesItem() {
@@ -108,13 +105,13 @@ export function createCitiesItem() {
   cityItem.classList = 'cities__item';
   cityItem.insertAdjacentHTML("afterbegin", `
   <button class="cities__name" type="button">${NOW.CITY.textContent}</button>
-  <button class="cities__close" type="button">X</button>`)
+  <button class="cities__close" type="button"></button>`)
 
   const cityItemName = cityItem.querySelector('.cities__name')
   const cityItemClose = cityItem.querySelector('.cities__close')
 
   addEvent(cityItemName, showWeather)
-  addEvent(cityItemClose, deleteFavoriteCity)
+  addEvent(cityItemClose, removeCityFromList)
 
   return cityItem;
 }
@@ -124,13 +121,13 @@ export function createForecastItem(item) {
   forecastItem.querySelector('.forecast__date').textContent = getDate(item.dt);
   forecastItem.querySelector('.forecast__time').textContent = getTime(item.dt);
   forecastItem.querySelector('.forecast__temp').textContent = `Temperature: ${Math.round(item.main.temp)}°`;
-  forecastItem.querySelector('.forecast__feels').textContent = `Feels like: ${item.main.feels_like}°`;
+  forecastItem.querySelector('.forecast__feels').textContent = `Feels like: ${Math.round(item.main.feels_like)}°`;
   forecastItem.querySelector('.forecast__precipitation').textContent = item.weather[0].main;
   forecastItem.querySelector('.forecast__img').src = `${CONFIG.IMG}${item.weather[0].icon}@4x.png`;
 
   return forecastItem;
 }
 
-export function getForecastItems(json) {
-  return json.list.map(item => createForecastItem(item))
+export function getForecastItems(forecast) {
+  return forecast.list.map(item => createForecastItem(item))
 }

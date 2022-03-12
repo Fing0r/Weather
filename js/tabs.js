@@ -11,6 +11,6 @@ export function changeTab(e) {
   isInfoTargetTab.classList.add(UI_ELEMENTS.ACTIVE_CLASS)
 }
 
-function removeActiveClass(elements) {
+export function removeActiveClass(elements) {
   elements.forEach(element => element.classList.remove(UI_ELEMENTS.ACTIVE_CLASS));
 }
