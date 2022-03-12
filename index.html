@@ -8,7 +8,7 @@
   <link href="style.css" rel="stylesheet">
   <title>Weather</title>
   <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
-  <script defer src="main.js" type="module"></script>
+  <script defer src="./js/main.js" type="module"></script>
 </head>
 
 <body>
@@ -56,54 +56,6 @@
           <div class="info__box forecast" data-item="3">
             <h3 class="forecast__city"></h3>
             <ul class="forecast__list">
-              <!-- <li class="forecast__card">
-                <div class="forecast__top">
-                  <span>17 May</span>
-                  <span>12:00</span>
-                </div>
-                <div class="forecast__bottom">
-                  <div class="forecast__temp">
-                    <span>Temperature: 13°</span>
-                    <span>Feels like: 10°</span>
-                  </div>
-                  <div class="forecast__weather">
-                    <span>Rain</span>
-                    <img src="./img/weather.png" alt="">
-                  </div>
-                </div>
-              </li>
-              <li class="forecast__card">
-                <div class="forecast__top">
-                  <span>17 May</span>
-                  <span>12:00</span>
-                </div>
-                <div class="forecast__bottom">
-                  <div class="forecast__temp">
-                    <span>Temperature: 13°</span>
-                    <span>Feels like: 10°</span>
-                  </div>
-                  <div class="forecast__weather">
-                    <span>Rain</span>
-                    <img src="./img/weather.png" alt="">
-                  </div>
-                </div>
-              </li>
-              <li class="forecast__card">
-                <div class="forecast__top">
-                  <span>17 May</span>
-                  <span>12:00</span>
-                </div>
-                <div class="forecast__bottom">
-                  <div class="forecast__temp">
-                    <span>Temperature: 13°</span>
-                    <span>Feels like: 10°</span>
-                  </div>
-                  <div class="forecast__weather">
-                    <span>Rain</span>
-                    <img src="./img/weather.png" alt="">
-                  </div>
-                </div>
-              </li> -->
             </ul>
           </div>
           <div class="info__btns">
@@ -117,34 +69,32 @@
         <div class="cities">
           <h2 class="cities__title">Added Locations:</h2>
           <ul class="cities__list">
-            <li class="cities__item">
+            <!-- <li class="cities__item">
               <button class="cities__name" type="button">Amur</button>
               <button class="cities__close" type="button">X</button>
-            </li>
+            </li> -->
           </ul>
         </div>
       </li>
     </ul>
   </div>
+  <template id="forecast-item">
+    <li class="forecast__card">
+      <div class="forecast__top">
+        <span class="forecast__date">17 May</span>
+        <span class="forecast__time">12:00</span>
+      </div>
+      <div class="forecast__bottom">
+        <div class="forecast__temperature">
+          <span class="forecast__temp">Temperature: 13°</span>
+          <span class="forecast__feels">Feels like: 10°</span>
+        </div>
+        <div class="forecast__weather">
+          <span class="forecast__precipitation">Rain</span>
+          <img class="forecast__img" src="./img/weather.png" alt="">
+        </div>
+      </div>
+    </li>
+  </template>
 </body>
-
 </html>
-
-<template id="forecast-item">
-  <li class="forecast__card">
-    <div class="forecast__top">
-      <span class="forecast__date">17 May</span>
-      <span class="forecast__time">12:00</span>
-    </div>
-    <div class="forecast__bottom">
-      <div class="forecast__temperature">
-        <span class="forecast__temp">Temperature: 13°</span>
-        <span class="forecast__feels">Feels like: 10°</span>
-      </div>
-      <div class="forecast__weather">
-        <span class="forecast__precipitation">Rain</span>
-        <img class="forecast__img" src="./img/weather.png" alt="">
-      </div>
-    </div>
-  </li>
-</template>

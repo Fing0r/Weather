@@ -8,8 +8,8 @@ export const UI_ELEMENTS = {
 
 export const CONFIG = {
   KEY: 'f660a2fb1e4bad108d6160b7f58c555f',
-  API: 'http://api.openweathermap.org/data/2.5/',
-  IMG: 'http://openweathermap.org/img/wn/',
+  API: 'https://api.openweathermap.org/data/2.5/',
+  IMG: 'https://openweathermap.org/img/wn/',
   WEATHER: 'weather',
   FORECAST: 'forecast',
   NUMBER_FORECASTS: 6,
@@ -22,7 +22,6 @@ export const FAVORITES = {
   ADD: document.querySelector('.now__heart'),
   CITIES: [],
 }
-
 
 export const NOW = {
   TEMP: document.querySelector('.now__temp'),
