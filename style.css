@@ -381,14 +381,14 @@ button {
   display: block;
 }
 
-.forecast__temp span {
+.forecast__temperature span {
   display: block;
 }
 
 .forecast__bottom {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
 }
 
 .forecast__weather img,
@@ -397,6 +397,8 @@ button {
   margin: 0 auto;
 }
 
-.forecast__weather img {
+.forecast__img {
   object-fit: cover;
+  width: 31px;
+  height: 31px;
 }
