@@ -64,8 +64,10 @@ export function stateFavoriteButton() {
 }
 
 export function addFavoriteCity() {
-  FAVORITES.LIST.append(createCitiesItem());
+  FAVORITES.LIST.append(createCitiesItem(NOW.CITY.textContent));
   FAVORITES.CITIES.push(NOW.CITY.textContent);
+  localStorage.setItem('city', [FAVORITES.CITIES])
+  localStorage.setItem('current', NOW.CITY.textContent)
 
   FAVORITES.ADD.classList.add(UI_ELEMENTS.ACTIVE_CLASS);
   addEvent(FAVORITES.ADD, removeFavoriteCity)
@@ -76,15 +78,16 @@ export function removeFavoriteCity() {
   FAVORITES.ADD.classList.remove(UI_ELEMENTS.ACTIVE_CLASS);
   addEvent(FAVORITES.ADD, addFavoriteCity);
 
-  [...FAVORITES.LIST.children].forEach(cityItem => {
-    const isTragetInNowTab = cityItem.textContent.trim() === NOW.CITY.textContent;
-    if (isTragetInNowTab) {
-      cityItem.remove();
-      FAVORITES.CITIES = FAVORITES.CITIES.filter(item => !(item === NOW.CITY.textContent))
-      return;
-    }
-  })
+  const isTragetInNowTab = [...FAVORITES.LIST.children].find(cityItem => cityItem.textContent.trim() === NOW.CITY.textContent)
+  if (isTragetInNowTab) {
+    isTragetInNowTab.remove();
+    FAVORITES.CITIES = FAVORITES.CITIES.filter(item => !(item === NOW.CITY.textContent))
+
+    localStorage.setItem('city', [FAVORITES.CITIES])
+    localStorage.removeItem('current')
+  }
 }
+
 
 export function removeCityFromList(e) {
   e.currentTarget.closest('.cities__item').remove()
@@ -98,32 +101,61 @@ export function removeCityFromList(e) {
 
   const cityName = e.currentTarget.closest('.cities__item').querySelector('.cities__name')
   FAVORITES.CITIES = FAVORITES.CITIES.filter(item => !(item === cityName.textContent))
+
+  localStorage.setItem('city', [FAVORITES.CITIES])
 }
 
-export function createCitiesItem() {
+export function createCitiesItem(city) {
   const cityItem = document.createElement('li');
   cityItem.classList = 'cities__item';
   cityItem.insertAdjacentHTML("afterbegin", `
-  <button class="cities__name" type="button">${NOW.CITY.textContent}</button>
+  <button class="cities__name" type="button">${city}</button>
   <button class="cities__close" type="button"></button>`)
 
   const cityItemName = cityItem.querySelector('.cities__name')
   const cityItemClose = cityItem.querySelector('.cities__close')
 
   addEvent(cityItemName, showWeather)
+  addEvent(cityItemName, getCurrentCity)
   addEvent(cityItemClose, removeCityFromList)
+  addEvent(cityItemClose, deletCurrentCity)
 
   return cityItem;
 }
 
-export function createForecastItem(item) {
+function getCurrentCity(e) {
+  localStorage.setItem('current', e.currentTarget.textContent)
+}
+
+function deletCurrentCity(e) {
+  const cityNameTarget = e.currentTarget.closest('.cities__item').textContent.trim()
+  const isCitiesNameEqual = cityNameTarget === localStorage.current
+
+  if (!isCitiesNameEqual) return;
+  
+  localStorage.removeItem('current')
+}
+
+export function createForecastItem({
+  dt:date,
+  main: {
+    temp,
+    feels_like
+  },
+  weather: {
+    [0]: {
+      main,
+      icon
+    }
+  }
+}) {
   const forecastItem = FORECAST.ITEM.content.firstElementChild.cloneNode(true)
-  forecastItem.querySelector('.forecast__date').textContent = getDate(item.dt);
-  forecastItem.querySelector('.forecast__time').textContent = getTime(item.dt);
-  forecastItem.querySelector('.forecast__temp').textContent = `Temperature: ${Math.round(item.main.temp)}°`;
-  forecastItem.querySelector('.forecast__feels').textContent = `Feels like: ${Math.round(item.main.feels_like)}°`;
-  forecastItem.querySelector('.forecast__precipitation').textContent = item.weather[0].main;
-  forecastItem.querySelector('.forecast__img').src = `${CONFIG.IMG}${item.weather[0].icon}@4x.png`;
+  forecastItem.querySelector('.forecast__date').textContent = getDate(date);
+  forecastItem.querySelector('.forecast__time').textContent = getTime(date);
+  forecastItem.querySelector('.forecast__temp').textContent = `Temperature: ${Math.round(temp)}°`;
+  forecastItem.querySelector('.forecast__feels').textContent = `Feels like: ${Math.round(feels_like)}°`;
+  forecastItem.querySelector('.forecast__precipitation').textContent = main;
+  forecastItem.querySelector('.forecast__img').src = `${CONFIG.IMG}${icon}@4x.png`;
 
   return forecastItem;
 }
