@@ -17,6 +17,7 @@ export const CONFIG = {
 
 export const FAVORITES = {
     LIST: document.querySelector('.cities__list'),
+    ITEM: document.getElementsByClassName('cities__item'),
     NAME: document.querySelectorAll('.cities__name'),
     DEL: document.querySelectorAll('.cities__close'),
     ADD: document.querySelector('.now__heart'),
