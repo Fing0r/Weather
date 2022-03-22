@@ -88,7 +88,7 @@ button {
   grid-template-columns: repeat(2, 1fr);
   grid-template-rows: 44px 1fr;
   border: 1px solid #000000;
-  flex: 0 0 600px;
+  flex: 0 1 600px;
   min-height: 440px;
   max-height: 440px;
 }
@@ -431,4 +431,42 @@ button {
   object-fit: cover;
   width: 31px;
   height: 31px;
+}
+
+@media (max-width: 600px) {
+  .weather {
+    align-items: flex-start;
+  }
+
+  .weather__list {
+    border: none;
+  }
+
+  .weather__item:nth-child(2) {
+    grid-area: unset;
+    grid-column: 2 span;
+  }
+
+  .weather__item:nth-child(3) {
+    grid-area: unset;
+    grid-column: 2 span;
+  }
+
+  .info {
+    min-height: 400px;
+    height: 50vh;
+  }
+
+  .info__box {
+    max-height: none;
+  }
+
+  .cities {
+    background-color: #fff;
+    min-height: 300px;
+    height: 45vh;
+  }
+  .cities__list {
+    height: unset;
+  }
 }
