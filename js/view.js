@@ -1,4 +1,5 @@
 import { DETAILS, NOW, FORECAST, CONFIG, FAVORITES, UI_ELEMENTS} from "./const.js";
+import * as storage from "./storage.js";
 import {addEvent, removeEvent, getDate, getTime, loadJson, getUrl } from "./mini-function.js";
 
 export function showWeather(e) {
@@ -66,9 +67,12 @@ export function stateFavoriteButton() {
 export function addFavoriteCity() {
   FAVORITES.LIST.append(createCitiesItem(NOW.CITY.textContent));
   FAVORITES.CITIES.push(NOW.CITY.textContent);
-  localStorage.setItem('city', [FAVORITES.CITIES])
-  localStorage.setItem('current', NOW.CITY.textContent)
 
+  console.log([...FAVORITES.ITEM]);
+
+  storage.updateFavoriteCities(FAVORITES.CITIES)
+  localStorage.setItem('currentCity', NOW.CITY.textContent)
+   
   FAVORITES.ADD.classList.add(UI_ELEMENTS.ACTIVE_CLASS);
   addEvent(FAVORITES.ADD, removeFavoriteCity)
   removeEvent(FAVORITES.ADD, addFavoriteCity)
@@ -79,15 +83,15 @@ export function removeFavoriteCity() {
   addEvent(FAVORITES.ADD, addFavoriteCity);
 
   const isTragetInNowTab = [...FAVORITES.LIST.children].find(cityItem => cityItem.textContent.trim() === NOW.CITY.textContent)
-  if (isTragetInNowTab) {
-    isTragetInNowTab.remove();
-    FAVORITES.CITIES = FAVORITES.CITIES.filter(item => !(item === NOW.CITY.textContent))
+  if (!isTragetInNowTab) return;
 
-    localStorage.setItem('city', [FAVORITES.CITIES])
-    localStorage.removeItem('current')
-  }
+  isTragetInNowTab.remove();
+
+  FAVORITES.CITIES = FAVORITES.CITIES.filter(item => !(item === NOW.CITY.textContent))
+
+  storage.updateFavoriteCities(FAVORITES.CITIES)
+  localStorage.removeItem('currentCity')
 }
-
 
 export function removeCityFromList(e) {
   e.currentTarget.closest('.cities__item').remove()
@@ -102,7 +106,8 @@ export function removeCityFromList(e) {
   const cityName = e.currentTarget.closest('.cities__item').querySelector('.cities__name')
   FAVORITES.CITIES = FAVORITES.CITIES.filter(item => !(item === cityName.textContent))
 
-  localStorage.setItem('city', [FAVORITES.CITIES])
+  storage.updateFavoriteCities(FAVORITES.CITIES)
+  deletCurrentCity(e)
 }
 
 export function createCitiesItem(city) {
@@ -118,22 +123,21 @@ export function createCitiesItem(city) {
   addEvent(cityItemName, showWeather)
   addEvent(cityItemName, getCurrentCity)
   addEvent(cityItemClose, removeCityFromList)
-  addEvent(cityItemClose, deletCurrentCity)
 
   return cityItem;
 }
 
 function getCurrentCity(e) {
-  localStorage.setItem('current', e.currentTarget.textContent)
+  localStorage.setItem('currentCity', e.currentTarget.textContent)
 }
 
 function deletCurrentCity(e) {
   const cityNameTarget = e.currentTarget.closest('.cities__item').textContent.trim()
-  const isCitiesNameEqual = cityNameTarget === localStorage.current
+  const isCitiesNameEqual = cityNameTarget === localStorage.currentCity
 
   if (!isCitiesNameEqual) return;
   
-  localStorage.removeItem('current')
+  localStorage.removeItem('currentCity')
 }
 
 export function createForecastItem({
