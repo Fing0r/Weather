@@ -18,12 +18,12 @@ export const CONFIG = {
 export const FAVORITES = {
     LIST: document.querySelector('.cities__list'),
     ITEM: document.getElementsByClassName('cities__item'),
+    TEMPLATE_ITEM: document.querySelector('#cities-item'),
     NAME: document.querySelectorAll('.cities__name'),
     DEL: document.querySelectorAll('.cities__close'),
     ADD: document.querySelector('.now__heart'),
-    CITIES: [],
+    CITIES: new Set(),
 }
-
 export const NOW = {
     TEMP: document.querySelector('.now__temp'),
     CITY: document.querySelector('.now__city'),
@@ -43,5 +43,5 @@ export const DETAILS = {
 export const FORECAST = {
     CITY: document.querySelector('.forecast__city'),
     LIST: document.querySelector('.forecast__list'),
-    ITEM: document.querySelector('#forecast-item'),
+    TEMPLATE_ITEM: document.querySelector('#forecast-item'),
 }

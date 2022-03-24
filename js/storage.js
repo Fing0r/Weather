@@ -1,19 +1,24 @@
-import { DETAILS, NOW, FORECAST, CONFIG, FAVORITES, UI_ELEMENTS} from "./const.js";
-import {showWeather, removeCityFromList, createCitiesItem, showCurrentWeather, showForecast} from "./view.js";
+import {FAVORITES, NOW} from "./const.js";
+import {createCitiesItem, showCurrentWeather, showForecast} from "./view.js";
 
-// storage.saveFavoriteCities(favoriteCities)
-// const favoriteCities = storage.getFavoriteCities();
-// const currentCity = storage.getCurrentCity();
-
-export function updateFavoriteCities(cities) {
-  localStorage.setItem('city', cities)
+export function updateFavoriteCities(citiesArr) {
+  const citiesJson = JSON.stringify([...citiesArr])
+  localStorage.setItem('city', citiesJson)
 }
 
 export function renderFavoriteCities() {
   if (!localStorage.city) return;
-  FAVORITES.CITIES = localStorage.city.split(',')
-  const favoriteItems = FAVORITES.CITIES.map(city => createCitiesItem(city))
+
+  const favoriteCities = JSON.parse(localStorage.city)
+  favoriteCities.forEach(city => FAVORITES.CITIES.add(city));
+
+  const favoriteItems = [...FAVORITES.CITIES].map(city => createCitiesItem(city))
   FAVORITES.LIST.append(...favoriteItems)
+}
+
+export function getCurrentCity(e) {
+  const currentCity = e.currentTarget.textContent.trim() || NOW.CITY.textContent;
+  localStorage.setItem('currentCity', currentCity)
 }
 
 export function getFavoriteCityWeather() {

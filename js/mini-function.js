@@ -15,6 +15,13 @@ export function getDate(param) {
   })
 }
 
+export async function getJson(cityName, type) {
+  const url = getUrl(cityName, type);
+  const response = await fetch(url);
+
+  return response.json();
+}
+
 export function getTime(param) {
   return new Date((param) * 1000).toLocaleTimeString('en-GB', {
     hour: 'numeric',

@@ -1,6 +1,6 @@
 import { DETAILS, NOW, FORECAST, CONFIG, FAVORITES, UI_ELEMENTS} from "./const.js";
 import * as storage from "./storage.js";
-import {addEvent, removeEvent, getDate, getTime, loadJson, getUrl } from "./mini-function.js";
+import {addEvent, removeEvent, getDate, getTime, getJson } from "./mini-function.js";
 
 export function showWeather(e) {
   e.preventDefault();
@@ -9,135 +9,137 @@ export function showWeather(e) {
   showCurrentWeather(cityName)
   showForecast(cityName)
 
-  if (UI_ELEMENTS.SEARCH_INPUT.value.trim()) {
-    UI_ELEMENTS.SEARCH_INPUT.value = ''
+  if (!UI_ELEMENTS.SEARCH_INPUT.value.trim()) return;
+  UI_ELEMENTS.SEARCH_INPUT.value = ''
+}
+
+export async function showCurrentWeather(cityName) {
+  const currentWeatherJson = await getJson(cityName, CONFIG.WEATHER)
+
+  showNowTab(currentWeatherJson);
+  showDetailsTab(currentWeatherJson);
+  stateFavoriteButton();
+}
+
+export async function showForecast(city) {
+  const forecastJson = await getJson(city, CONFIG.FORECAST)
+  const forecastItems = getForecastItems(forecastJson)
+  const {city:{name: cityName}} = forecastJson
+
+  FORECAST.CITY.textContent = cityName;
+  FORECAST.LIST.replaceChildren();
+  FORECAST.LIST.append(...forecastItems);
+}
+
+export function showDetailsTab({
+  name: name,
+  main: {
+    temp: temperature,
+    feels_like: feelsLike
+  },
+   weather: {
+     [0]: {
+       main: weather
+     }
+   },
+   sys: {
+     sunrise: sunrise,
+     sunset: sunset
+   }
+}) {
+  DETAILS.CITY.textContent = name;
+  DETAILS.TEMPERATURE.textContent = `Temperature: ${Math.round(temperature)}°`;
+  DETAILS.FEELS.textContent = `Feels like: ${Math.round(feelsLike)}°`;
+  DETAILS.WEATHER.textContent = `Weather: ${weather}`;
+  DETAILS.SUNRISE.textContent = `Sunrise: ${getTime(sunrise)}`;
+  DETAILS.SUNSET.textContent = `Sunset: ${getTime(sunset)}`;
+}
+
+export function showNowTab({
+  name: cityName,
+  main: {
+    temp: temperature
+  },
+  weather:{
+    [0]:{
+      icon: icon
+    }
   }
+}) {
+  NOW.TEMP.textContent = `${Math.round(temperature)}°`;
+  NOW.CITY.textContent = cityName;
+  NOW.IMG.src = `${CONFIG.IMG}${icon}@4x.png`
 }
 
-export function showCurrentWeather(cityName) {
-  loadJson(getUrl(cityName, CONFIG.WEATHER))
-    .then(city => {
-      showNowTab(city);
-      showDetailsTab(city);
-      stateFavoriteButton();
-    })
-    .catch(console.log)
-}
+function stateFavoriteButton() {
+  const isCityInList = FAVORITES.CITIES.has(NOW.CITY.textContent)
 
-export function showForecast(city) {
-  loadJson(getUrl(city, CONFIG.FORECAST))
-    .then(getForecastItems)
-    .then(forecastItems => {
-      FORECAST.CITY.textContent = city;
-      FORECAST.LIST.replaceChildren();
-      FORECAST.LIST.append(...forecastItems);
-    })
-    .catch(console.log)
-}
-
-export function showDetailsTab(city) {
-  DETAILS.CITY.textContent = city.name;
-  DETAILS.TEMPERATURE.textContent = `Temperature: ${Math.round(city.main.temp)}°`;
-  DETAILS.FEELS.textContent = `Feels like: ${Math.round(city.main.feels_like)}°`;
-  DETAILS.WEATHER.textContent = `Weather: ${city.weather[0].main}`;
-  DETAILS.SUNRISE.textContent = `Sunrise: ${getTime(city.sys.sunrise)}`;
-  DETAILS.SUNSET.textContent = `Sunset: ${getTime(city.sys.sunset)}`;
-}
-
-export function showNowTab(city) {
-  NOW.TEMP.textContent = `${Math.round(city.main.temp)}°`;
-  NOW.CITY.textContent = city.name;
-  NOW.IMG.src = `${CONFIG.IMG}${city.weather[0].icon}@4x.png`
-}
-
-export const isCityInList = () => FAVORITES.CITIES.some(item => item === NOW.CITY.textContent);
-
-export function stateFavoriteButton() {
-  if (isCityInList()) {
-    FAVORITES.ADD.classList.add(UI_ELEMENTS.ACTIVE_CLASS);
-    addEvent(FAVORITES.ADD, removeFavoriteCity);
-    removeEvent(FAVORITES.ADD, addFavoriteCity);
+  if (isCityInList) {
+    addAndRemoveEvent(removeFavoriteCity, addFavoriteCity, 'addClass')
   } else {
-    FAVORITES.ADD.classList.remove(UI_ELEMENTS.ACTIVE_CLASS);
-    addEvent(FAVORITES.ADD, addFavoriteCity);
-    removeEvent(FAVORITES.ADD, removeFavoriteCity);
+    addAndRemoveEvent(addFavoriteCity, removeFavoriteCity)
   }
 }
 
-export function addFavoriteCity() {
-  FAVORITES.LIST.append(createCitiesItem(NOW.CITY.textContent));
-  FAVORITES.CITIES.push(NOW.CITY.textContent);
+function addAndRemoveEvent(addFunction, removeFunction, toggleCLass) {
+  addEvent(FAVORITES.ADD, addFunction);
+  removeEvent(FAVORITES.ADD, removeFunction);
+  
+  toggleCLass ? FAVORITES.ADD.classList.add(UI_ELEMENTS.ACTIVE_CLASS) : FAVORITES.ADD.classList.remove(UI_ELEMENTS.ACTIVE_CLASS);
+}
 
-  console.log([...FAVORITES.ITEM]);
+function addFavoriteCity(e) {
+  FAVORITES.LIST.append(createCitiesItem(NOW.CITY.textContent));
+  FAVORITES.CITIES.add(NOW.CITY.textContent)
 
   storage.updateFavoriteCities(FAVORITES.CITIES)
-  localStorage.setItem('currentCity', NOW.CITY.textContent)
+  storage.getCurrentCity(e)
    
-  FAVORITES.ADD.classList.add(UI_ELEMENTS.ACTIVE_CLASS);
-  addEvent(FAVORITES.ADD, removeFavoriteCity)
-  removeEvent(FAVORITES.ADD, addFavoriteCity)
+  addAndRemoveEvent(removeFavoriteCity, addFavoriteCity, 'addClass')
 }
 
-export function removeFavoriteCity() {
-  FAVORITES.ADD.classList.remove(UI_ELEMENTS.ACTIVE_CLASS);
-  addEvent(FAVORITES.ADD, addFavoriteCity);
+function removeFavoriteCity() {
+  addAndRemoveEvent(addFavoriteCity, removeFavoriteCity)
 
   const isTragetInNowTab = [...FAVORITES.LIST.children].find(cityItem => cityItem.textContent.trim() === NOW.CITY.textContent)
   if (!isTragetInNowTab) return;
 
   isTragetInNowTab.remove();
 
-  FAVORITES.CITIES = FAVORITES.CITIES.filter(item => !(item === NOW.CITY.textContent))
+  FAVORITES.CITIES.delete(NOW.CITY.textContent)
 
   storage.updateFavoriteCities(FAVORITES.CITIES)
   localStorage.removeItem('currentCity')
 }
 
 export function removeCityFromList(e) {
-  e.currentTarget.closest('.cities__item').remove()
-  const cityNameTarget = e.currentTarget.closest('.cities__item').querySelector('.cities__name')
+  const cityInTarget = e.currentTarget.closest('.cities__item')
+  const nameCityInTarget = cityInTarget.textContent.trim()
 
-  const isTragetInNowTab = cityNameTarget.textContent === NOW.CITY.textContent;
-  if (isTragetInNowTab) {
-    FAVORITES.ADD.classList.remove(UI_ELEMENTS.ACTIVE_CLASS)
-    addEvent(FAVORITES.ADD, addFavoriteCity)
-  }
+  FAVORITES.CITIES.delete(nameCityInTarget);
+  cityInTarget.remove();
+  storage.updateFavoriteCities(FAVORITES.CITIES);
 
-  const cityName = e.currentTarget.closest('.cities__item').querySelector('.cities__name')
-  FAVORITES.CITIES = FAVORITES.CITIES.filter(item => !(item === cityName.textContent))
+  const isTargetInNowTab = nameCityInTarget === NOW.CITY.textContent;
 
-  storage.updateFavoriteCities(FAVORITES.CITIES)
-  deletCurrentCity(e)
+  if (!isTargetInNowTab) return;
+
+  addAndRemoveEvent(addFavoriteCity, removeFavoriteCity)
+  localStorage.removeItem('currentCity')
 }
 
 export function createCitiesItem(city) {
-  const cityItem = document.createElement('li');
-  cityItem.classList = 'cities__item';
-  cityItem.insertAdjacentHTML("afterbegin", `
-  <button class="cities__name" type="button">${city}</button>
-  <button class="cities__close" type="button"></button>`)
+  const cityItem = FAVORITES.TEMPLATE_ITEM.content.firstElementChild.cloneNode(true);
 
-  const cityItemName = cityItem.querySelector('.cities__name')
-  const cityItemClose = cityItem.querySelector('.cities__close')
+  const cityItemClose = cityItem.querySelector('.cities__close');
+  const cityItemName = cityItem.querySelector('.cities__name');
+  cityItemName.textContent = city;
 
-  addEvent(cityItemName, showWeather)
-  addEvent(cityItemName, getCurrentCity)
-  addEvent(cityItemClose, removeCityFromList)
+  addEvent(cityItemName, showWeather);
+  addEvent(cityItemName, storage.getCurrentCity);
+  addEvent(cityItemClose, removeCityFromList);
 
   return cityItem;
-}
-
-function getCurrentCity(e) {
-  localStorage.setItem('currentCity', e.currentTarget.textContent)
-}
-
-function deletCurrentCity(e) {
-  const cityNameTarget = e.currentTarget.closest('.cities__item').textContent.trim()
-  const isCitiesNameEqual = cityNameTarget === localStorage.currentCity
-
-  if (!isCitiesNameEqual) return;
-  
-  localStorage.removeItem('currentCity')
 }
 
 export function createForecastItem({
@@ -153,7 +155,7 @@ export function createForecastItem({
     }
   }
 }) {
-  const forecastItem = FORECAST.ITEM.content.firstElementChild.cloneNode(true)
+  const forecastItem = FORECAST.TEMPLATE_ITEM.content.firstElementChild.cloneNode(true);
   forecastItem.querySelector('.forecast__date').textContent = getDate(date);
   forecastItem.querySelector('.forecast__time').textContent = getTime(date);
   forecastItem.querySelector('.forecast__temp').textContent = `Temperature: ${Math.round(temp)}°`;
@@ -164,6 +166,6 @@ export function createForecastItem({
   return forecastItem;
 }
 
-export function getForecastItems(forecast) {
-  return forecast.list.map(item => createForecastItem(item))
+export function getForecastItems({list: forecastList}) {
+  return forecastList.map(item => createForecastItem(item))
 }
