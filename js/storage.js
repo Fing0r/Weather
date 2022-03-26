@@ -1,5 +1,6 @@
 import {FAVORITES, NOW} from "./const.js";
-import {createCitiesItem, showCurrentWeather, showForecast} from "./view.js";
+import {showCurrentWeather, showForecast} from "./view.js";
+import {FavoriteCity} from "./favoriteCity.js";
 
 export function updateFavoriteCities(citiesArr) {
   const citiesJson = JSON.stringify([...citiesArr])
@@ -10,9 +11,9 @@ export function renderFavoriteCities() {
   if (!localStorage.city) return;
 
   const favoriteCities = JSON.parse(localStorage.city)
-  favoriteCities.forEach(city => FAVORITES.CITIES.add(city));
+  FAVORITES.CITIES = new Set(favoriteCities)
 
-  const favoriteItems = [...FAVORITES.CITIES].map(city => createCitiesItem(city))
+  const favoriteItems = [...FAVORITES.CITIES].map(item => new FavoriteCity(item).createCitiesItem())
   FAVORITES.LIST.append(...favoriteItems)
 }
 
