@@ -13,9 +13,24 @@ export function renderFavoriteCities() {
   const favoriteCities = JSON.parse(localStorage.city)
   FAVORITES.CITIES = new Set(favoriteCities)
 
-  const favoriteItems = [...FAVORITES.CITIES].map(item => new FavoriteCity(item).createCitiesItem())
-  FAVORITES.LIST.append(...favoriteItems)
+  let count = 0;
+
+  createFavoriteItems(count);
 }
+
+// ============= Мое подобие рекурсии:)) ===================
+
+function createFavoriteItems(count) {
+  if ([...FAVORITES.CITIES].length === count) return;
+
+  const item = new FavoriteCity([...FAVORITES.CITIES][count]).createCitiesItem();
+
+  FAVORITES.LIST.append(item); 
+
+  return createFavoriteItems(++count);
+}
+
+// =========================================================
 
 export function getCurrentCity(e) {
   const currentCity = e.currentTarget.textContent.trim() || NOW.CITY.textContent;
@@ -28,3 +43,7 @@ export function getFavoriteCityWeather() {
   showCurrentWeather(localStorage.currentCity)
   showForecast(localStorage.currentCity)
 }
+
+
+  // const favoriteItems = [...FAVORITES.CITIES].map(item => new FavoriteCity(item).createCitiesItem());
+  // FAVORITES.LIST.append(...favoriteItems);
