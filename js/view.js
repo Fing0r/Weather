@@ -8,11 +8,11 @@ export function showWeather(e) {
   e.preventDefault();
   const cityName = e.currentTarget.textContent.trim() || UI_ELEMENTS.SEARCH_INPUT.value.trim();
 
-  showCurrentWeather(cityName)
-  showForecast(cityName)
+  showCurrentWeather(cityName);
+  showForecast(cityName);
 
   if (!UI_ELEMENTS.SEARCH_INPUT.value.trim()) return;
-  UI_ELEMENTS.SEARCH_INPUT.value = ''
+  UI_ELEMENTS.SEARCH_INPUT.value = '';
 }
 
 export async function showCurrentWeather(cityName) {
@@ -24,9 +24,9 @@ export async function showCurrentWeather(cityName) {
 }
 
 export async function showForecast(city) {
-  const forecastJson = await getJson(city, CONFIG.FORECAST)
-  const forecastItems = getForecastItems(forecastJson)
-  const {city:{name: cityName}} = forecastJson
+  const forecastJson = await getJson(city, CONFIG.FORECAST);
+  const forecastItems = getForecastItems(forecastJson);
+  const {city:{name: cityName}} = forecastJson;
 
   FORECAST.CITY.textContent = cityName;
   FORECAST.LIST.replaceChildren();
@@ -47,7 +47,7 @@ export function showDetailsTab({
    sys: {
      sunrise: sunrise,
      sunset: sunset
-   }
+   },
 }) {
   DETAILS.CITY.textContent = name;
   DETAILS.TEMPERATURE.textContent = `Temperature: ${Math.round(temperature)}°`;
@@ -103,17 +103,17 @@ export function addFavoriteCity(e) {
 }
 
 export function removeFavoriteCity() {
-  addAndRemoveEvent(addFavoriteCity, removeFavoriteCity)
+  addAndRemoveEvent(addFavoriteCity, removeFavoriteCity);
 
-  const isTragetInNowTab = [...FAVORITES.LIST.children].find(cityItem => cityItem.textContent.trim() === NOW.CITY.textContent)
+  const isTragetInNowTab = [...FAVORITES.LIST.children].find(cityItem => cityItem.textContent.trim() === NOW.CITY.textContent);
   if (!isTragetInNowTab) return;
 
   isTragetInNowTab.remove();
 
-  FAVORITES.CITIES.delete(NOW.CITY.textContent)
+  FAVORITES.CITIES.delete(NOW.CITY.textContent);
 
-  storage.updateFavoriteCities(FAVORITES.CITIES)
-  localStorage.removeItem('currentCity')
+  storage.updateFavoriteCities(FAVORITES.CITIES);
+  localStorage.removeItem('currentCity');
 }
 
 export function createForecastItem({
@@ -141,5 +141,5 @@ export function createForecastItem({
 }
 
 export function getForecastItems({list: forecastList}) {
-  return forecastList.map(item => createForecastItem(item))
+  return forecastList.map(item => createForecastItem(item));
 }

@@ -22,7 +22,7 @@ export async function getJson(cityName, type) {
   return response.json();
 }
 
-export function getTime(param) {
+export function getTime(param, timezone) {
   return new Date((param) * 1000).toLocaleTimeString('en-GB', {
     hour: 'numeric',
     minute: 'numeric'
