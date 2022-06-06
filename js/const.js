@@ -8,8 +8,8 @@ export const UI_ELEMENTS = {
 
 export const CONFIG = {
     KEY: '410226e920d4ba9da4b071dd89dac12f',
-    API: 'https://api.openweathermap.org/data/2.5/',
-    IMG: 'https://openweathermap.org/img/wn/',
+    API: 'http://api.openweathermap.org/data/2.5/',
+    IMG: 'http://openweathermap.org/img/wn/',
     WEATHER: 'weather',
     FORECAST: 'forecast',
     NUMBER_FORECASTS: 6,
